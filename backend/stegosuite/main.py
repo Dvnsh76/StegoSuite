@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import numpy as np
 from PIL import Image
@@ -14,7 +14,7 @@ import traceback
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-app = Flask(__name__,static_folder='frontend\dist',static_url_path='')
+app = Flask(__name__,static_folder="../frontend/dist",static_url_path="/")
 CORS(app, expose_headers=['X-Metrics'])
 
 @app.route('/health', methods=['GET'])
@@ -149,14 +149,10 @@ def handle_decode():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    return app.send_static_file("index.html")
-
+@app.route("/")
+def home():
+    return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == '__main__':
-    logging.info("Starting StegoSuite Flask server...")
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run()
 
