@@ -14,7 +14,7 @@ import traceback
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-app = Flask(__name__,static_folder="../frontend/dist",static_url_path="/")
+app = Flask(__name__, static_folder="../frontend/dist", static_url_path="")
 CORS(app, expose_headers=['X-Metrics'])
 
 @app.route('/health', methods=['GET'])
@@ -149,10 +149,16 @@ def handle_decode():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route("/")
-def home():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react_app(path):
+    file_path = os.path.join(app.static_folder, path)
+    if path != "" and os.path.isfile(file_path):
+        return send_from_directory(app.static_folder, path)
     return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == '__main__':
-    app.home()
-
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    logging.info(f"Starting StegoSuite Flask server on port {port}...")
+    app.run(host='0.0.0.0', port=port)
