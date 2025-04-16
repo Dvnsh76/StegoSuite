@@ -151,8 +151,8 @@ def handle_decode():
 
 @app.route("/")
 def home():
-    return send_from_directory(app.static_folder, "../frontend/index.html")
+    return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == '__main__':
-    app.run()
+    app.home()
 
