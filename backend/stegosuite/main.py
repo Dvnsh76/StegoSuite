@@ -14,7 +14,7 @@ import traceback
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='frontend\dist',static_url_path='')
 CORS(app, expose_headers=['X-Metrics'])
 
 @app.route('/health', methods=['GET'])
@@ -147,6 +147,13 @@ def handle_decode():
         error_details = traceback.format_exc()
         logging.error(f"Decoding error: {e}\n{error_details}")
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return app.send_static_file("index.html")
+
 
 if __name__ == '__main__':
     logging.info("Starting StegoSuite Flask server...")
