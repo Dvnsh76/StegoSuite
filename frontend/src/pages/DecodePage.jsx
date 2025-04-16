@@ -64,7 +64,7 @@ export default function StegoSuiteDecode() {
     formData.append("scheme", scheme);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/decode", formData);
+      const response = await axios.post("/api/decode", formData);
       setResult(response.data.message || "No hidden message found");
     } catch (err) {
       setError(err.response?.data?.error || "Decoding failed. Please try again.");
